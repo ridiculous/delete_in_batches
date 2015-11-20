@@ -7,6 +7,7 @@ module DeleteInBatches
 
     # TODO dry
     pk = "#{quoted_table_name}.#{quoted_primary_key}"
+    subquery = -> { select(pk).limit(batch_size).to_sql }
     sql =
       if connection.respond_to?(:unprepared_statement)
         # ActiveRecord 4
