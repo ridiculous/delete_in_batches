@@ -10,11 +10,9 @@ module DeleteInBatches
     sql =
       if connection.respond_to?(:unprepared_statement)
         # ActiveRecord 4
-        connection.unprepared_statement do
-          select(pk).limit(batch_size).to_sql
-        end
+        connection.unprepared_statement &subquery
       else
-        select(pk).limit(batch_size).to_sql
+        subquery.call
       end
 
     while connection.delete("DELETE FROM #{quoted_table_name} WHERE #{pk} IN (#{sql})") == batch_size
